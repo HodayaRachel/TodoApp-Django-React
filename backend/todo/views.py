@@ -2,8 +2,11 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .serializers import TodoSerializer
 from .models import Todo
-from django.http import HttpResponse
 import pymongo
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+
+
 # Create your views here.
 
 
@@ -16,13 +19,13 @@ def index(request):
     return HttpResponse("<h1>Hello and welcome to my first <u>Django App</u> project!</h1>")
 
 
-client = pymongo.MongoClient("mongodb+srv://<user>:<password>@cluster0.aq0uddv.mongodb.net/?retryWrites=true&w=majority")
+client = pymongo.MongoClient("****")
+
 # db = client.test
 
 
 # Define Db Name
 dbname = client['TodoApp']
-
 
 # Define Collection
 collection = dbname['Todos']
@@ -41,3 +44,8 @@ task_details = collection.find({})
 for r in task_details:
     print(r['title'])
 
+
+def delete(request, id):
+    todo = Todo.objects.get(id=id)
+    todo.delete()
+    return HttpResponseRedirect(reverse('index'))
